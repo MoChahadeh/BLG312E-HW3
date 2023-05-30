@@ -101,7 +101,7 @@ void printProcessesSummary(int allocation[MAX_PROCESS][MAX_RESOURCE], int need[M
 
         }
 
-        printf("\nNeed Vector (Requested Resources): ");
+        printf("\nRequested Resources: ");
         for(int resource = 0; resource < MAX_RESOURCE; resource++) {
 
             printf(" R%d:%d ", resource + 1, need[process][resource]);
@@ -116,9 +116,8 @@ void printProcessesSummary(int allocation[MAX_PROCESS][MAX_RESOURCE], int need[M
 
 
 
-bool isSafeState(int available[MAX_RESOURCE], int max[MAX_PROCESS][MAX_RESOURCE],
-                int allocation[MAX_PROCESS][MAX_RESOURCE],
-                int need[MAX_PROCESS][MAX_RESOURCE], bool finish[MAX_PROCESS], int safe_sequence[MAX_PROCESS]) {
+bool isSafeState(int available[MAX_RESOURCE], int allocation[MAX_PROCESS][MAX_RESOURCE], int need[MAX_PROCESS][MAX_RESOURCE], bool finish[MAX_PROCESS], int safe_sequence[MAX_PROCESS]) { 
+    
     bool safe = true;
 
     int work[MAX_RESOURCE];
@@ -171,12 +170,12 @@ bool isSafeState(int available[MAX_RESOURCE], int max[MAX_PROCESS][MAX_RESOURCE]
     return safe;
 }
 
-void detectDeadlockOrSafe(int available[MAX_RESOURCE], int max[MAX_PROCESS][MAX_RESOURCE], int allocation[MAX_PROCESS][MAX_RESOURCE], int need[MAX_PROCESS][MAX_RESOURCE]) {
+void detectDeadlockOrSafe(int available[MAX_RESOURCE], int allocation[MAX_PROCESS][MAX_RESOURCE], int need[MAX_PROCESS][MAX_RESOURCE]) {
 
     bool finish[MAX_PROCESS] = { [0 ... MAX_PROCESS - 1] =  false };
     int safe_sequence[MAX_PROCESS] = { [0 ... MAX_PROCESS-1] = -1 };
 
-    bool safe = isSafeState(available, max, allocation, need, finish, safe_sequence);
+    bool safe = isSafeState(available, allocation, need, finish, safe_sequence);
 
     printf("\n\nRESULTS: \n");
 
@@ -221,18 +220,11 @@ int main() {
         }
     }
 
-    // Calculate the max array based on allocation and need arrays
-    for (int i = 0; i < MAX_PROCESS; i++) {
-        for (int j = 0; j < MAX_RESOURCE; j++) {
-            max[i][j] = allocation[i][j] + need[i][j];
-        }
-    }
-
     // Print the resource allocations, needs, and need vectors
     printProcessesSummary(allocation, need);
 
 
-    detectDeadlockOrSafe(available, max, allocation, need);
+    detectDeadlockOrSafe(available, allocation, need);
 
     return 0;
 }
